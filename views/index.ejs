@@ -1,0 +1,20 @@
+<html>
+  <head>
+     <link rel="stylesheet" href="/style.css">
+    <title>Weather App</title>
+  </head>
+  <body>
+    <h1>Check the Weather</h1>
+
+    <form action="/weather" method="POST"> 
+      <label for="zip">Enter ZIP Code:</label>
+      <input 
+      type="text" 
+      id="zip" 
+      name="zip" 
+      placeholder="e.g. 90210" 
+      required />
+      <button type="submit">Get Weather</button>
+    </form>
+  </body>
+</html>

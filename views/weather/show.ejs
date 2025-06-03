@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/style.css" />
+    <title>Weather Forecast</title>
+  </head>
+  <body>
+    <h1>Weather for <%= weather.name %></h1>
+    <div class="weather-icon">
+      <img
+        src="https://openweathermap.org/img/wn/<%= weather.icon %>@2x.png"
+        alt="<%= weather.description %>"
+        width="100"
+        height="100"
+      />
+    </div>
+
+    <button id="toggleBtn" onclick="toggleUnits()">Switch to °C</button>
+
+    <ul id="weather-data">
+      <li id="temp">
+        <strong>Temperature:</strong>
+        <span data-f="<%= weather.tempF %>" data-c="<%= weather.tempC %>">
+          <%= weather.tempF %> °F
+        </span>
+      </li>
+      <li><strong>Description:</strong> <%= weather.description %></li>
+      <li><strong>Humidity:</strong> <%= weather.humidity %>%</li>
+
+      <li id="pressure">
+        <strong>Pressure:</strong>
+        <span
+          data-hpa="<%= weather.pressureHpa %>"
+          data-inhg="<%= weather.pressureInHg %>"
+        >
+          <%= weather.pressureHpa %> hPa
+        </span>
+      </li>
+
+      <li id="wind">
+        <strong>Wind Speed:</strong>
+        <span
+          data-mph="<%= weather.windMph %>"
+          data-kph="<%= weather.windKph %>"
+        >
+          <%= weather.windMph %> mph
+        </span>
+      </li>
+    </ul>
+
+    <a href="/">Back to home!</a>
+
+    <script src="/units.js"></script>
+  </body>
+</html>
