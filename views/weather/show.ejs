@@ -1,56 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather for <%= weather.name %></title>
     <link rel="stylesheet" href="/style.css" />
-    <title>Weather Forecast</title>
   </head>
   <body>
-    <h1>Weather for <%= weather.name %></h1>
-    <div class="weather-icon">
+    <div class="container">
+      <h1>🌤️ Weather Report</h1>
+
+      <h2><%= weather.name %></h2>
       <img
         src="https://openweathermap.org/img/wn/<%= weather.icon %>@2x.png"
-        alt="<%= weather.description %>"
-        width="100"
-        height="100"
+        alt="Weather Icon"
       />
-    </div>
 
-    <button id="toggleBtn" onclick="toggleUnits()">Switch to °C</button>
+      <ul>
+        <li id="temp">
+          <strong>Temperature:</strong>
+          <span data-f="<%= weather.tempF %>" data-c="<%= weather.tempC %>"><%= weather.tempC %> °C</span>
+        </li>
 
-    <ul id="weather-data">
-      <li id="temp">
-        <strong>Temperature:</strong>
-        <span data-f="<%= weather.tempF %>" data-c="<%= weather.tempC %>">
-          <%= weather.tempF %> °F
-        </span>
-      </li>
-      <li><strong>Description:</strong> <%= weather.description %></li>
-      <li><strong>Humidity:</strong> <%= weather.humidity %>%</li>
+        <li><strong>Description:</strong> <%= weather.description %></li>
+        <li><strong>Humidity:</strong> <%= weather.humidity %> %</li>
 
-      <li id="pressure">
-        <strong>Pressure:</strong>
-        <span
-          data-hpa="<%= weather.pressureHpa %>"
-          data-inhg="<%= weather.pressureInHg %>"
-        >
-          <%= weather.pressureHpa %> hPa
-        </span>
-      </li>
+        <li id="pressure">
+          <strong>Pressure:</strong>
+          <span data-hpa="<%= weather.pressureHpa %>" data-inhg="<%= weather.pressureInHg %>"><%= weather.pressureHpa %> hPa</span>
+        </li>
 
       <li id="wind">
         <strong>Wind Speed:</strong>
-        <span
-          data-mph="<%= weather.windMph %>"
-          data-kph="<%= weather.windKph %>"
-        >
-          <%= weather.windMph %> mph
-        </span>
+        <span data-kph="<%= weather.windKph %>"data-mph="<%= weather.windMph %>"><%= weather.windKph %> kph</span>
       </li>
     </ul>
 
-    <a href="/">Back to home!</a>
+      <button id="toggleBtn" type="button" onclick="toggleUnits()">Switch to Imperial</button>
 
-    <script src="/units.js"></script>
+      <br /><br />
+      <a href="/">🔙 Back to Home</a>
+    </div>
+
+    <script src="/js/units.js"></script>
   </body>
 </html>

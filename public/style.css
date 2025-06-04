@@ -62,3 +62,21 @@ button#toggleBtn:hover {
   margin: 1em 0;
   text-align: center;
 }
+
+/*Toggle transition*/
+#temp span,
+#pressure span,
+#wind span {
+  display: inline-block;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+  will-change: opacity;
+}
+
+.unit-fade-out {
+  opacity: 0;
+}
+
+.unit-fade-in {
+  opacity: 1;
+}

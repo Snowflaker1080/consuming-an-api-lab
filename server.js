@@ -1,5 +1,3 @@
-// api.openweathermap.org/data/2.5/weather?zip=[ZIP CODE],us&units=imperial&appid=[API KEY]
-
 require("dotenv").config();
 const express = require("express");
 const app = express();
@@ -11,20 +9,25 @@ app.use(express.static("public"));
 
 let weatherData = null; // Temporary store for weather data between redirects
 
-// Home page route
+// Home page
 app.get("/", (req, res) => {
   res.render("index");
 });
 
-// POST /weather route
-app.post("/weather", async (req, res) => {
+// Show weather results
+app.get("/weather/show", (req, res) => {
+  if (!weatherData) return res.redirect("/");
+  res.render("weather/show", { weather: weatherData });
+});
+
+// POST for ZIP code
+app.post("/weather/zip", async (req, res) => {
   const zip = req.body.zip;
   const apiKey = process.env.API_KEY;
   const url = `https://api.openweathermap.org/data/2.5/weather?zip=${zip},us&units=imperial&appid=${apiKey}`;
-  console.log("API KEY:", process.env.API_KEY);
+
   try {
     const response = await fetch(url);
-    if (!response.ok) throw new Error("Failed to fetch weather data");
     const data = await response.json();
 
     // convert values
@@ -37,33 +40,63 @@ app.post("/weather", async (req, res) => {
     const pressureHpa = data.main.pressure;
     const pressureInHg = pressureHpa * 0.02953;
 
-   weatherData = {
+    weatherData = {
       name: data.name,
       description: data.weather[0].description,
-      icon: data.weather[0].icon, 
+      icon: data.weather[0].icon,
       tempF,
       tempC: tempC.toFixed(1),
       humidity: data.main.humidity,
       pressureHpa,
-      pressureInHg: pressureInHg.toFixed(2),
+      pressureInHg: pressureInHg.toFixed(0),
       windMph,
       windKph: windKph.toFixed(1),
     };
 
     res.redirect("/weather/show");
   } catch (error) {
-    console.error(error.message);
-    res.send("Error retrieving weather data. Please try again.");
+    console.error("Zip Error:", error.message);
+    res.send("Error retrieving by ZIP. Please try again.");
   }
 });
 
-// Get /weather/show route
-app.get("/weather/show", (req, res) => {
-  if (!weatherData) {
-    return res.redirect("/");
-  }
+// POST for city/state/country
+app.post("/weather/location", async (req, res) => {
+  const { city, state, country } = req.body;
+  const apiKey = process.env.API_KEY;
+  const geoURL = `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},${country}&limit=1&appid=${apiKey}`;
 
-  res.render("weather/show", { weather: weatherData });
+  try {
+    const geoRes = await fetch(geoURL);
+    const geoData = await geoRes.json();
+
+    if (!geoData.length) throw new Error("Location not found");
+
+    const { lat, lon, name } = geoData[0];
+
+    // Use co-ordinates to get weather
+    const weatherURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+    const weatherRes = await fetch(weatherURL);
+    const data = await weatherRes.json();
+
+     weatherData = {
+      name: name,
+      description: data.weather[0].description,
+      icon: data.weather[0].icon,
+      tempF: ((data.main.temp * 9) / 5 + 32).toFixed(1),
+      tempC: data.main.temp.toFixed(1),
+      humidity: data.main.humidity,
+      pressureHpa: data.main.pressure,
+      pressureInHg: (data.main.pressure * 0.02953).toFixed(1),
+      windMph: (data.wind.speed / 1.60934).toFixed(1),
+      windKph: data.wind.speed.toFixed(1),
+    };
+
+      res.redirect("/weather/show");
+  } catch (error) {
+    console.error("Location Error:", error.message);
+    res.send("Error retrieving weather by location. Try again.");
+  }
 });
 
 // Start server
